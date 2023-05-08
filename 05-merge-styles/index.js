@@ -1,30 +1,22 @@
 const fs = require('fs');
 const path = require('path');
-const bandle = path.join('./05-merge-styles/project-dist/bandle.css');
-const projectDist = './05-merge-styles/project-dist';
-// const filesCopy = 'files-copy';
 
-fs.mkdir(bandle, (err) => {
-  if(err) {
-    console.error(err);
-    return;
-  }
+const bundle = path.join('./05-merge-styles/project-dist', 'bundle.css');
+const styles = path.join('./05-merge-styles/styles');
+const bundleStream = fs.createWriteStream(bundle);
 
-  console.log(`Create new folder "bandle"`);
-});
 
-fs.readdir(filesRead, (err, files) => {
+fs.readdir(styles, (err, files) => {
   if(err) {
     console.error(err);
     return
   }
 
-  files.forEach((file) => {
-    const filePath = path.join(filesRead, file);
-    const copyFilePath = path.join(filesCopy, file);
-    const fileStream = fs.createReadStream(filePath);
-    const copyStream = fs.createWriteStream(copyFilePath);
+  const filesCss = files.filter(file => path.extname(file) === '.css');
 
-    fileStream.pipe(copyStream);
+  filesCss.forEach(file => {
+    const fileStyles = path.join(styles, file);
+    const readStyles = fs.createReadStream(fileStyles);
+    readStyles.pipe(bundleStream);
   })
 })
